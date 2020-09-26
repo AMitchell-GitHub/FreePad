@@ -1,0 +1,11 @@
+C:\Users\ktorb\Desktop\freePad\bin\Debug\FreePad.exe.config
+C:\Users\ktorb\Desktop\freePad\bin\Debug\FreePad.exe
+C:\Users\ktorb\Desktop\freePad\bin\Debug\FreePad.pdb
+C:\Users\ktorb\Desktop\freePad\bin\Debug\Microsoft.Ink.dll
+C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.baseWindow.resources
+C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.Properties.Resources.resources
+C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.csproj.GenerateResource.cache
+C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.csproj.CoreCompileInputs.cache
+C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.csproj.CopyComplete
+C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.exe
+C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.pdb
