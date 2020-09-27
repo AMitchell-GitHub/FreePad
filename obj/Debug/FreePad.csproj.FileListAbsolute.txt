@@ -9,3 +9,4 @@ C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.csproj.CoreCompileInputs.cache
 C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.csproj.CopyComplete
 C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.exe
 C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.pdb
+C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.csprojAssemblyReference.cache

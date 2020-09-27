@@ -45,7 +45,7 @@
             this.fullScreenButton = new System.Windows.Forms.Button();
             this.icon = new System.Windows.Forms.PictureBox();
             this.closeButton = new System.Windows.Forms.Button();
-            this.drawingArea = new System.Windows.Forms.Panel();
+            this.drawingArea = new DrawingPanel();
             this.leftResizeBar = new System.Windows.Forms.Panel();
             this.rightResizeBar = new System.Windows.Forms.Panel();
             this.bottomResizeBar = new System.Windows.Forms.Panel();
@@ -54,11 +54,14 @@
             this.toolSizeLabel = new System.Windows.Forms.Label();
             this.zoomMagnifierIcon = new System.Windows.Forms.PictureBox();
             this.zoomValueLabel = new System.Windows.Forms.Label();
+            this.colorWheel = new System.Windows.Forms.PictureBox();
+            this.currentColorPanel = new System.Windows.Forms.Panel();
             this.topBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.icon)).BeginInit();
             this.drawingSettingsBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.toolSizeIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.zoomMagnifierIcon)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorWheel)).BeginInit();
             this.SuspendLayout();
             // 
             // topBar
@@ -161,12 +164,14 @@
             this.drawingArea.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.drawingArea.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
-            this.drawingArea.Location = new System.Drawing.Point(14, 58);
+            this.drawingArea.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.drawingArea.Location = new System.Drawing.Point(12, 56);
+            this.drawingArea.Margin = new System.Windows.Forms.Padding(5);
             this.drawingArea.Name = "drawingArea";
-            this.drawingArea.Size = new System.Drawing.Size(772, 378);
+            this.drawingArea.Size = new System.Drawing.Size(625, 380);
             this.drawingArea.TabIndex = 0;
             this.drawingArea.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.keyPressed);
+            this.drawingArea.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawingArea_Paint);
             this.drawingArea.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawingArea_MouseDown);
             this.drawingArea.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawingArea_MouseMove);
             this.drawingArea.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.DrawingArea_MouseWheel);
@@ -274,11 +279,36 @@
             this.zoomValueLabel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ZoomMagnifierIcon_MouseClick);
             this.zoomValueLabel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.zoomValueLabel_MouseWheel);
             // 
+            // colorWheel
+            // 
+            this.colorWheel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.colorWheel.Image = ((System.Drawing.Image)(resources.GetObject("colorWheel.Image")));
+            this.colorWheel.Location = new System.Drawing.Point(645, 60);
+            this.colorWheel.Name = "colorWheel";
+            this.colorWheel.Size = new System.Drawing.Size(140, 140);
+            this.colorWheel.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.colorWheel.TabIndex = 0;
+            this.colorWheel.TabStop = false;
+            this.colorWheel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ColorWheel_MouseDown);
+            this.colorWheel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ColorWheel_MouseMove);
+            // 
+            // currentColorPanel
+            // 
+            this.currentColorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.currentColorPanel.BackColor = System.Drawing.Color.Black;
+            this.currentColorPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.currentColorPanel.Location = new System.Drawing.Point(670, 205);
+            this.currentColorPanel.Name = "currentColorPanel";
+            this.currentColorPanel.Size = new System.Drawing.Size(93, 19);
+            this.currentColorPanel.TabIndex = 4;
+            // 
             // baseWindow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.currentColorPanel);
+            this.Controls.Add(this.colorWheel);
             this.Controls.Add(this.drawingSettingsBar);
             this.Controls.Add(this.bottomResizeBar);
             this.Controls.Add(this.rightResizeBar);
@@ -291,7 +321,7 @@
             this.KeyPreview = true;
             this.Name = "baseWindow";
             this.Text = "FreePad";
-            this.Load += new System.EventHandler(this.InkZoom_Load);
+            this.Load += new System.EventHandler(this.Ink_Load);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.keyPressed);
             this.topBar.ResumeLayout(false);
             this.topBar.PerformLayout();
@@ -300,6 +330,7 @@
             this.drawingSettingsBar.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.toolSizeIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.zoomMagnifierIcon)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorWheel)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -308,7 +339,7 @@
 
         private System.Windows.Forms.Panel topBar;
         private System.Windows.Forms.Button closeButton;
-        private System.Windows.Forms.Panel drawingArea;
+        private DrawingPanel drawingArea;
         private System.Windows.Forms.Panel leftResizeBar;
         private System.Windows.Forms.Panel rightResizeBar;
         private System.Windows.Forms.Panel bottomResizeBar;
@@ -321,6 +352,8 @@
         private System.Windows.Forms.PictureBox zoomMagnifierIcon;
         private System.Windows.Forms.PictureBox toolSizeIcon;
         private System.Windows.Forms.Label toolSizeLabel;
+        private System.Windows.Forms.PictureBox colorWheel;
+        private System.Windows.Forms.Panel currentColorPanel;
     }
 }
 
