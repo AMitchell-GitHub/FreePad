@@ -10,3 +10,10 @@ C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.csproj.CopyComplete
 C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.exe
 C:\Users\ktorb\Desktop\freePad\obj\Debug\FreePad.pdb
 C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.csprojAssemblyReference.cache
+C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.ColorWheelWindow.resources
+C:\Users\ktorb\Desktop\FreePad\bin\Debug\Syncfusion.Core.WinForms.dll
+C:\Users\ktorb\Desktop\FreePad\bin\Debug\Syncfusion.Licensing.dll
+C:\Users\ktorb\Desktop\FreePad\bin\Debug\Syncfusion.Shared.Base.dll
+C:\Users\ktorb\Desktop\FreePad\bin\Debug\Syncfusion.Core.WinForms.xml
+C:\Users\ktorb\Desktop\FreePad\bin\Debug\Syncfusion.Shared.Base.xml
+C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.FreePadBaseForm.resources
