@@ -36,7 +36,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.drawingArea = new System.Windows.Forms.Panel();
+            this.drawingArea = new FreePad.DrawingPanel();
             this.SuspendLayout();
             // 
             // drawingArea
@@ -45,10 +45,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.drawingArea.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
-            this.drawingArea.Location = new System.Drawing.Point(14, 14);
+            this.drawingArea.Location = new System.Drawing.Point(14, 81);
             this.drawingArea.Margin = new System.Windows.Forms.Padding(5);
             this.drawingArea.Name = "drawingArea";
-            this.drawingArea.Size = new System.Drawing.Size(760, 442);
+            this.drawingArea.Size = new System.Drawing.Size(760, 375);
             this.drawingArea.TabIndex = 0;
             this.drawingArea.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.keyPressed);
             this.drawingArea.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawingArea_Paint);
@@ -89,6 +89,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel drawingArea;
+        private DrawingPanel drawingArea;
     }
 }

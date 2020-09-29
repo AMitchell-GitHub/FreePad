@@ -34,17 +34,17 @@
             // 
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(83)))), ((int)(((byte)(83)))));
-            this.BorderThickness = 2;
+            this.BorderThickness = 5;
             this.CaptionAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.CaptionBarColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(83)))), ((int)(((byte)(83)))));
             this.CaptionBarHeight = 20;
             this.CaptionFont = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CaptionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
-            this.ClientSize = new System.Drawing.Size(63, 274);
+            this.ClientSize = new System.Drawing.Size(76, 300);
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximumSize = new System.Drawing.Size(75, 300);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximumSize = new System.Drawing.Size(76, 300);
             this.MetroColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(83)))), ((int)(((byte)(83)))));
             this.Name = "Tools";
             this.ShowIcon = false;
@@ -52,7 +52,8 @@
             this.ShowMaximizeBox = false;
             this.ShowMinimizeBox = false;
             this.Text = "Tools";
-            this.TopMost = true;
+            this.Activated += new System.EventHandler(this.Tools_Activated);
+            this.Deactivate += new System.EventHandler(this.Tools_Deactivate);
             this.ResizeBegin += new System.EventHandler(this.Tools_ResizeBegin);
             this.ResizeEnd += new System.EventHandler(this.Tools_ResizeEnd);
             this.Move += new System.EventHandler(this.Tools_Move);
