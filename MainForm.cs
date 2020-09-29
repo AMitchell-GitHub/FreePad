@@ -10,14 +10,14 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Drawing.Drawing2D;
 using Microsoft.Ink;
-using System.Threading;
-using System.Runtime.InteropServices;
 
 namespace FreePad
 {
     public partial class MainForm : Syncfusion.Windows.Forms.MetroForm
     {
         public Point mouseLocation;
+
+        public bool deactivated = false;
 
         Point viewportLocation = new Point(0, 0);
 
@@ -38,15 +38,13 @@ namespace FreePad
 
         Tools tools;
 
-        bool isDeactivated = false;
-
 
 
 
         public MainForm()
         {
             InitializeComponent();
-            tools = new Tools(this, new Point(12, 30)) { TopMost = true };
+            tools = new Tools(this);
             tools.Show();
         }
 
@@ -55,7 +53,6 @@ namespace FreePad
 
 
         #region Ink Controlling
-
 
         private void inkCollector_Stroke(object sender, InkCollectorStrokeEventArgs e)
         {
@@ -157,6 +154,8 @@ namespace FreePad
             inkCollector.Stroke += new InkCollectorStrokeEventHandler(inkCollector_Stroke);
 
             ManagedBitmap mbmp = new ManagedBitmap(0, 0, new Bitmap(mapsWidth, mapsHeight, System.Drawing.Imaging.PixelFormat.Format32bppPArgb));
+            mbmp.g.DrawRectangle(Pens.LightGray, 0, 0, mapsWidth - 1, mapsHeight - 1);
+            mbmp.g.DrawString("(" + getGridX(0) + ", " + getGridY(0) + ")", this.Font, Brushes.Black, 10f, 10f);
             managedMaps.Add(new Point(0, 0), mbmp);
 
             inkCollector.Enabled = true;
@@ -165,14 +164,14 @@ namespace FreePad
 
         public void updateBrushSize(float newBrushSize)
         {
-            newBrushSize = Math.Max(Math.Min(newBrushSize, 1000), 1);
+            //newBrushSize = Math.Max(Math.Min(newBrushSize, 1000), 1);
             //this.toolSizeLabel.Text = "" + newBrushSize;
-            inkCollector.DefaultDrawingAttributes.Width = newBrushSize;
+            //inkCollector.DefaultDrawingAttributes.Width = newBrushSize;
         }
 
         public float changeZoomLevel(float newZoom)
         {
-            currentZoom = Math.Max(Math.Min(newZoom, 500), 10);
+            //currentZoom = Math.Max(Math.Min(newZoom, 500), 10);
             //this.zoomValueLabel.Text = currentZoom + "%";
             return 0f;
         }
@@ -293,9 +292,6 @@ namespace FreePad
                     managedMaps.Add(new Point(0, 0), mbmp);
                     Refresh();
                     break;
-                case ('n'):
-                    tools.BringToFront();
-                    break;
             };
             e.Handled = true;
         }
@@ -314,30 +310,39 @@ namespace FreePad
 
         private void MainForm_Move(object sender, EventArgs e)
         {
-            if (tools.mini.docked)
+            if (tools.docked)
             {   tools.Location = new Point(this.Location.X + 12, this.Location.Y + 30);   }
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized)
-            {  tools.Hide();  }
+            {  tools.lastLocation = tools.Location; tools.TopMost = false; tools.WindowState = FormWindowState.Minimized;  }
 
             else if (WindowState == FormWindowState.Normal)
-            {  tools.Show(); tools.load();  }
-
-            else if (WindowState == FormWindowState.Maximized)
-            {  tools.Show(); tools.load();  }
+            {  tools.WindowState = FormWindowState.Normal;  tools.load(); MainForm_Move(sender, e);  }
         }
 
         private void MainForm_Deactivate(object sender, EventArgs e)
         {
-            isDeactivated = true;
+            if (tools.deactivated)
+            {
+                this.deactivated = true;
+                tools.TopMost = false;
+                tools.wasLoaded = false;
+                debug("F");
+            }
+            debug("C");
         }
 
         private void MainForm_Activated(object sender, EventArgs e)
         {
-            isDeactivated = false;
+            this.deactivated = false;
+            if (!tools.wasLoaded)
+            {
+                tools.load();
+            }
+            debug("A");
         }
     }
 }

@@ -12,48 +12,61 @@ namespace FreePad
 {
     public partial class Tools : Syncfusion.Windows.Forms.MetroForm
     {
-        public MiniForm mini;
+        bool beingMoved = false;
+        public bool deactivated = false;
+        public bool wasLoaded = false;
+        public bool docked = true;
+        public Point lastLocation;
+        MainForm mf;
 
-        public Tools(MainForm givenMainForm, Point dockingPointRelative)
+        public Tools(MainForm gmf)
         {
             InitializeComponent();
-            this.mini = new MiniForm(givenMainForm, dockingPointRelative, this);
+            mf = gmf;
         }
 
         private void Tools_ResizeBegin(object sender, EventArgs e)
         {
-            mini.MiniForm_ResizeBegin(sender, e);
+            beingMoved = true;
         }
 
         private void Tools_ResizeEnd(object sender, EventArgs e)
         {
-            mini.MiniForm_ResizeEnd(sender, e);
+            beingMoved = false;
+            if (this.Location == new Point(mf.Location.X + 12, mf.Location.Y + 30)) { docked = true; }
+            else { docked = false; }
         }
 
         private void Tools_Move(object sender, EventArgs e)
         {
-            mini.MiniForm_Move(sender, e);
+            if (beingMoved)
+            {
+                Rectangle dropArea = new Rectangle(mf.Location.X-8, mf.Location.Y+20, 40, 40);
+                if (dropArea.Contains(this.Location)) {   Location = new Point(mf.Location.X + 12, mf.Location.Y + 30);   }
+            }
         }
 
 
 
-
-        public void load()
-        {
-            /*mini.mf.debug("loaded tools");
-            this.TopMost = true;
-            this.Show();*/
-            if (mini.docked) { this.Location = new Point(mini.mf.Location.X + 12, mini.mf.Location.Y + 30); }
-        }
-
-        private void Tools_Activated(object sender, EventArgs e)
-        {
-            mini.MiniForm_Activated(sender, e);
-        }
 
         private void Tools_Deactivate(object sender, EventArgs e)
         {
-            mini.MiniForm_Deactivated(sender, e);
+            deactivated = true;
+            this.TopMost = false;
+        }
+
+        private void Tools_Activated(object sender, EventArgs e)
+        {  deactivated = false;  }
+
+        public void load()
+        {
+            mf.debug("B");
+            if (!this.TopMost) { this.TopMost = true; }
+            this.Show();
+            this.Location = this.lastLocation;
+            if (this.docked)
+            { this.Location = new Point(mf.Location.X + 12, mf.Location.Y + 30); }
+            this.wasLoaded = true;
         }
     }
 }
