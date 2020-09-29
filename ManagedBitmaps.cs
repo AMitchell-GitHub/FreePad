@@ -14,7 +14,8 @@ namespace FreePad
         public Graphics g;
         public Rectangle rectMap;
 
-        public ManagedBitmap(int givenX, int givenY, Bitmap givenMap) { this.x = givenX; this.y = givenY; this.map = givenMap; this.g = Graphics.FromImage(this.map); rectMap = new Rectangle(this.x, this.y, this.map.Width, this.map.Height); }
+        public ManagedBitmap(int givenX, int givenY, Bitmap givenMap) { this.x = givenX; this.y = givenY; this.map = givenMap; this.g = Graphics.FromImage(this.map); rectMap = new Rectangle(this.x, this.y, this.map.Width, this.map.Height);
+        if (x == 0) { g.DrawLine(Pens.LightGray, 0,0, 0,map.Height); }  if (y == 0) { g.DrawLine(Pens.LightGray, 0,0, map.Width,0); }  }
 
         public bool crossesMap (Rectangle rectStroke)
         {
