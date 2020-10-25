@@ -12,10 +12,11 @@ using System.Drawing.Drawing2D;
 using Microsoft.Ink;
 using System.Threading;
 using System.Runtime.InteropServices;
+using Syncfusion.Windows.Forms;
 
 namespace FreePad
 {
-    public partial class MainForm : Syncfusion.Windows.Forms.MetroForm
+    public partial class MainForm : MetroForm
     {
         public Point mouseLocation;
 
@@ -23,8 +24,8 @@ namespace FreePad
 
         private InkOverlay inkCollector = null;
 
-        const int mapsWidth = 720;
-        const int mapsHeight = 405;
+        const int mapsWidth = 960;
+        const int mapsHeight = 540;
 
         Dictionary<Point, ManagedBitmap> managedMaps = new Dictionary<Point, ManagedBitmap>();
 
@@ -46,6 +47,18 @@ namespace FreePad
         public MainForm()
         {
             InitializeComponent();
+
+            MenuColors.CommandBarBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(83)))), ((int)(((byte)(83)))));
+
+            CaptionImage icon = new CaptionImage();
+            Bitmap bmp = new Bitmap(Properties.Resources.FreePadIcon);
+            icon.Image = bmp;
+            icon.Size = new Size(18, 18);
+            icon.Location = new Point(8, 1);
+            icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(83)))), ((int)(((byte)(83)))));
+            icon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(83)))), ((int)(((byte)(83)))), ((int)(((byte)(83)))));
+            this.CaptionImages.Add(icon);
+
             tools = new Tools(this, new Point(12, 30)) { TopMost = true };
             tools.Show();
         }
@@ -89,7 +102,7 @@ namespace FreePad
                         ManagedBitmap mbmp;
                         if (!managedMaps.ContainsKey(new Point(getGridX(sp2.X), getGridY(sp2.Y))))
                         {
-                            mbmp = new ManagedBitmap(getGridX(sp2.X) * mapsWidth, getGridY(sp2.Y) * mapsHeight, new Bitmap(mapsWidth, mapsHeight, System.Drawing.Imaging.PixelFormat.Format32bppPArgb));
+                            mbmp = new ManagedBitmap(getGridX(sp2.X) * mapsWidth, getGridY(sp2.Y) * mapsHeight, new Bitmap(mapsWidth, mapsHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb));
                             //mbmp.g.DrawRectangle(Pens.LightGray, 0, 0, mapsWidth - 1, mapsHeight - 1);
                             //mbmp.g.DrawString("(" + getGridX(sp2.X) + ", " + getGridY(sp2.Y) + ")", this.Font, Brushes.Black, 10f, 10f);
                             managedMaps.Add(new Point(getGridX(sp2.X), getGridY(sp2.Y)), mbmp);
@@ -107,7 +120,7 @@ namespace FreePad
                     Point mbmpP1 = new Point(mbmp.x + viewportLocation.X, mbmp.y + viewportLocation.Y);
 
                     using (Graphics g = CreateGraphics())
-                    { inkCollector.Renderer.PixelToInkSpace(g, ref mbmpP1); }
+                    { g.InterpolationMode = InterpolationMode.HighQualityBicubic; g.SmoothingMode = SmoothingMode.HighQuality; g.CompositingQuality = CompositingQuality.HighQuality; inkCollector.Renderer.PixelToInkSpace(g, ref mbmpP1); }
                     Matrix m, m2;
                     m = m2 = new Matrix();
                     inkCollector.Renderer.GetViewTransform(ref m);
@@ -117,9 +130,13 @@ namespace FreePad
                     inkCollector.Renderer.Draw(mbmp.map, strokesToDry);
                     inkCollector.Renderer.SetViewTransform(m2);
 
-                    this.drawingArea.CreateGraphics().DrawImage(mbmp.map, mbmp.x - viewportLocation.X, mbmp.y - viewportLocation.Y, mbmp.map.Width, mbmp.map.Height);
+                    Graphics graphics = this.drawingArea.CreateGraphics();
 
-                    mbmp.map.MakeTransparent(this.drawingArea.BackColor);
+                    graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    graphics.SmoothingMode = SmoothingMode.HighQuality;
+                    graphics.CompositingQuality = CompositingQuality.HighQuality;
+                    graphics.DrawImage(mbmp.map, mbmp.x - viewportLocation.X, mbmp.y - viewportLocation.Y, mbmp.map.Width, mbmp.map.Height);
+
                 }
 
                 inkCollector.Renderer.SetViewTransform(originalMatrix);
@@ -129,6 +146,10 @@ namespace FreePad
 
                 return 0;
             });
+
+            if (dryInk != null) { dryInk.Wait(); }
+
+            this.drawingArea.Refresh();
         }
 
         public int getGridX(int x)
@@ -139,6 +160,9 @@ namespace FreePad
         private void DrawingArea_Paint(object sender, PaintEventArgs e)
         {
             Rectangle viewportRect = new Rectangle(viewportLocation, new Size(this.drawingArea.Width, this.drawingArea.Height));
+            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
             foreach (ManagedBitmap mbmp in managedMaps.Values)
             {
                 if (viewportRect.IntersectsWith(mbmp.rectMap)) { e.Graphics.DrawImage(mbmp.map, mbmp.x - viewportLocation.X, mbmp.y - viewportLocation.Y, mbmp.map.Width, mbmp.map.Height); }
@@ -147,7 +171,6 @@ namespace FreePad
 
         private void Ink_Load(object sender, System.EventArgs e)
         {
-            this.MaximizedBounds = System.Windows.Forms.Screen.FromHandle(this.Handle).WorkingArea;
             inkCollector = new InkOverlay(this.drawingArea.Handle);
             inkCollector.AutoRedraw = false;
 
@@ -156,8 +179,8 @@ namespace FreePad
             //inkCollector.NewPackets += new InkCollectorNewPacketsEventHandler(inkCollector_NewPackets);
             inkCollector.Stroke += new InkCollectorStrokeEventHandler(inkCollector_Stroke);
 
-            ManagedBitmap mbmp = new ManagedBitmap(0, 0, new Bitmap(mapsWidth, mapsHeight, System.Drawing.Imaging.PixelFormat.Format32bppPArgb));
-            managedMaps.Add(new Point(0, 0), mbmp);
+            //ManagedBitmap mbmp = new ManagedBitmap(0, 0, new Bitmap(mapsWidth, mapsHeight, System.Drawing.Imaging.PixelFormat.Format64bppPArgb));
+            //managedMaps.Add(new Point(0, 0), mbmp);
 
             inkCollector.Enabled = true;
         }
@@ -166,7 +189,7 @@ namespace FreePad
         public void updateBrushSize(float newBrushSize)
         {
             newBrushSize = Math.Max(Math.Min(newBrushSize, 1000), 1);
-            //this.toolSizeLabel.Text = "" + newBrushSize;
+            this.tools.penSizeLabel.Text = "" + newBrushSize;
             inkCollector.DefaultDrawingAttributes.Width = newBrushSize;
         }
 
@@ -315,7 +338,7 @@ namespace FreePad
         private void MainForm_Move(object sender, EventArgs e)
         {
             if (tools.mini.docked)
-            {   tools.Location = new Point(this.Location.X + 12, this.Location.Y + 30);   }
+            {   tools.Location = new Point(this.Location.X + 8, this.Location.Y + 52);   }
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -338,6 +361,20 @@ namespace FreePad
         private void MainForm_Activated(object sender, EventArgs e)
         {
             isDeactivated = false;
+        }
+
+
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+
+        private IntPtr getActiveWindowHandle()
+        {
+            IntPtr handle = GetForegroundWindow();
+            return handle;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FreePad
@@ -14,9 +13,12 @@ namespace FreePad
         [STAThread]
         static void Main()
         {
+            string text = System.IO.File.ReadAllText(@"C:\SyncFusionLicenseKey.txt");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(text);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new baseWindow());
+            Application.Run(new MainForm());
         }
     }
 }

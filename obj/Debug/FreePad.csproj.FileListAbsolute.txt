@@ -52,7 +52,7 @@ C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.csproj.CoreCompileInputs.cache
 C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.csproj.CopyComplete
 C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.exe
 C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.pdb
-C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.csprojAssemblyReference.cache
 C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.MainForm.resources
 C:\Users\ktorb\Desktop\FreePad\bin\Debug\Microsoft.Ink.dll
 C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.Tools.resources
+C:\Users\ktorb\Desktop\FreePad\obj\Debug\FreePad.csprojAssemblyReference.cache
