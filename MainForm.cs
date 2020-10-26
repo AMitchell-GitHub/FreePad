@@ -13,6 +13,10 @@ using Microsoft.Ink;
 using System.Threading;
 using System.Runtime.InteropServices;
 using Syncfusion.Windows.Forms;
+using System.IO;
+using System.Drawing.Imaging;
+using MyScript.IInk;
+using MyScript.IInk.UIReferenceImplementation;
 
 namespace FreePad
 {
@@ -23,6 +27,11 @@ namespace FreePad
         Point viewportLocation = new Point(0, 0);
 
         private InkOverlay inkCollector = null;
+
+        public Engine iinkEngine;
+        public MyScript.IInk.Renderer iinkRenderer;
+        public ContentPackage iinkPackage;
+        public Editor iinkEditor;
 
         const int mapsWidth = 960;
         const int mapsHeight = 540;
@@ -61,6 +70,23 @@ namespace FreePad
 
             tools = new Tools(this, new Point(12, 30)) { TopMost = true };
             tools.Show();
+
+
+            iinkEngine = Engine.Create(MyScript.Certificate.MyCertificate.Bytes);
+            Configuration iinkEngineConfiguration = iinkEngine.Configuration;
+            iinkEngineConfiguration.SetNumber("math.solver.fractional-part-digits", 5);
+            iinkEngineConfiguration.SetString("lang", "en_US");
+
+            //EditorUserControl editorUserControl = new EditorUserControl();
+
+            iinkRenderer = iinkEngine.CreateRenderer(this.drawingArea.Width, this.drawingArea.Height, this.drawingArea);
+            iinkEditor = iinkEngine.CreateEditor(iinkRenderer);
+            iinkPackage = iinkEngine.CreatePackage("newPackage.iink");
+
+            iinkEditor.SetFontMetricsProvider(new FontMetricsProvider(this.drawingArea.Width, this.drawingArea.Height));
+            iinkEditor.SetViewSize(this.drawingArea.Width, this.drawingArea.Height);
+
+            iinkEditor.Part = iinkPackage.CreatePart("Text");
         }
 
 
@@ -157,6 +183,21 @@ namespace FreePad
         public int getGridY(int y)
         { return (int)((y - (y % mapsHeight)) / mapsHeight); }
 
+        public void exportAsNotes()
+        {
+            using (FileStream file = new FileStream("file.pog", FileMode.Create, System.IO.FileAccess.Write))
+            {
+                file.Write(BitConverter.GetBytes(managedMaps.Count), 0, 4);
+                foreach (ManagedBitmap mbmp in managedMaps.Values)
+                {
+                    file.Write(BitConverter.GetBytes(mbmp.x), 0, 4);
+                    file.Write(BitConverter.GetBytes(mbmp.y), 0, 4);
+                    mbmp.map.Save(file, ImageFormat.Png);
+                }
+                file.Close();
+            }
+        }
+
         private void DrawingArea_Paint(object sender, PaintEventArgs e)
         {
             Rectangle viewportRect = new Rectangle(viewportLocation, new Size(this.drawingArea.Width, this.drawingArea.Height));
@@ -200,63 +241,63 @@ namespace FreePad
             return 0f;
         }
 
-        private void DrawingArea_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (!this.drawingArea.Focused) { this.drawingArea.Focus(); }
-            if (panning)
-            {
-                mouseLocation = new Point(e.X, e.Y);
-            }
-        }
+        //private void DrawingArea_MouseDown(object sender, MouseEventArgs e)
+        //{
+        //    if (!this.drawingArea.Focused) { this.drawingArea.Focus(); }
+        //    if (panning)
+        //    {
+        //        mouseLocation = new Point(e.X, e.Y);
+        //    }
+        //}
 
-        private void DrawingArea_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (panning && (MouseButtons == MouseButtons.Left))
-            {
-                Point currentMousePosition = new Point(e.X, e.Y);
+        //private void DrawingArea_MouseMove(object sender, MouseEventArgs e)
+        //{
+        //    if (panning && (MouseButtons == MouseButtons.Left))
+        //    {
+        //        Point currentMousePosition = new Point(e.X, e.Y);
 
-                int xDiff = currentMousePosition.X - mouseLocation.X;
-                int yDiff = currentMousePosition.Y - mouseLocation.Y;
-                int zoomMult = (int)(100f / currentZoom);
+        //        int xDiff = currentMousePosition.X - mouseLocation.X;
+        //        int yDiff = currentMousePosition.Y - mouseLocation.Y;
+        //        int zoomMult = (int)(100f / currentZoom);
 
-                viewportLocation.Offset(-xDiff * zoomMult, -yDiff * zoomMult);
+        //        viewportLocation.Offset(-xDiff * zoomMult, -yDiff * zoomMult);
 
-                Refresh();
+        //        Refresh();
 
-                mouseLocation = currentMousePosition;
-            }
-        }
+        //        mouseLocation = currentMousePosition;
+        //    }
+        //}
 
-        private void ZoomMagnifierIcon_MouseClick(object sender, MouseEventArgs e)
-        {
-            changeZoomLevel(100);
-            Matrix m = new Matrix();
-            m.Scale(currentZoom / 100, currentZoom / 100);
-            inkCollector.Renderer.SetViewTransform(m);
-            Refresh();
-        }
+        //private void ZoomMagnifierIcon_MouseClick(object sender, MouseEventArgs e)
+        //{
+        //    changeZoomLevel(100);
+        //    Matrix m = new Matrix();
+        //    m.Scale(currentZoom / 100, currentZoom / 100);
+        //    inkCollector.Renderer.SetViewTransform(m);
+        //    Refresh();
+        //}
 
-        private void zoomValueLabel_MouseWheel(object sender, MouseEventArgs e)
-        {
-            bool up = false;
-            if (e.Delta > 0) { up = !up; }
-            if (up) { changeZoomLevel(currentZoom + 20); }
-            else { changeZoomLevel(currentZoom - 20); }
+        //private void zoomValueLabel_MouseWheel(object sender, MouseEventArgs e)
+        //{
+        //    bool up = false;
+        //    if (e.Delta > 0) { up = !up; }
+        //    if (up) { changeZoomLevel(currentZoom + 20); }
+        //    else { changeZoomLevel(currentZoom - 20); }
 
-            Matrix m = new Matrix();
-            m.Scale(currentZoom / 100, currentZoom / 100);
-            inkCollector.Renderer.SetViewTransform(m);
-            Refresh();
-        }
+        //    Matrix m = new Matrix();
+        //    m.Scale(currentZoom / 100, currentZoom / 100);
+        //    inkCollector.Renderer.SetViewTransform(m);
+        //    Refresh();
+        //}
 
-        private void ToolSizeIcon_MouseClick(object sender, MouseEventArgs e)
-        { updateBrushSize(100); }
+        //private void ToolSizeIcon_MouseClick(object sender, MouseEventArgs e)
+        //{ updateBrushSize(100); }
 
-        private void ToolSizeLabel_MouseWheel(object sender, MouseEventArgs e)
-        {
-            if (e.Delta > 0) { updateBrushSize(inkCollector.DefaultDrawingAttributes.Width + 25); }
-            else { updateBrushSize(inkCollector.DefaultDrawingAttributes.Width - 25); }
-        }
+        //private void ToolSizeLabel_MouseWheel(object sender, MouseEventArgs e)
+        //{
+        //    if (e.Delta > 0) { updateBrushSize(inkCollector.DefaultDrawingAttributes.Width + 25); }
+        //    else { updateBrushSize(inkCollector.DefaultDrawingAttributes.Width - 25); }
+        //}
 
         #endregion
 
@@ -375,6 +416,18 @@ namespace FreePad
         {
             IntPtr handle = GetForegroundWindow();
             return handle;
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            exportAsNotes();
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            iinkEditor.Convert(iinkEditor.GetRootBlock(), ConversionState.DIGITAL_EDIT);
+            this.drawingArea.Refresh();
+            //iinkEditor.Import_(MimeType.TEXT, "Hello iink SDK", iinkEditor.GetRootBlock());
         }
     }
 }
